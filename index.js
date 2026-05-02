@@ -20,7 +20,7 @@ const defaultRooms = [
 ];
 
 mongoose
-  .connect("mongodb://localhost:27017/inlognito")
+  .connect(process.env.MONGODB_URI || "mongodb://localhost:27017/inlognito")
   .then(async () => {
     console.log("MongoDB connected");
     const count = await Room.countDocuments({ isDefault: true });
@@ -34,14 +34,16 @@ mongoose
 const app = express();
 const server = http.createServer(app);
 
+const CLIENT_URL = process.env.CLIENT_URL || "http://localhost:3000";
+
 const io = new Server(server, {
   cors: {
-    origin: "http://localhost:3000",
+    origin: CLIENT_URL,
     credentials: true,
   },
 });
 
-app.use(cors({ origin: "http://localhost:3000", credentials: true }));
+app.use(cors({ origin: CLIENT_URL, credentials: true }));
 app.use(express.json());
 app.use("/api/rooms", roomsRouter);
 app.use("/api/admin", adminRouter);
@@ -151,6 +153,7 @@ io.on("connection", async (socket) => {
   });
 });
 
-server.listen(4000, () => {
-  console.log("Server running on port 4000");
+const PORT = process.env.PORT || 4000;
+server.listen(PORT, () => {
+  console.log(`Server running on port ${PORT}`);
 });
