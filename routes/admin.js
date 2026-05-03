@@ -3,6 +3,7 @@ const router = express.Router();
 const Message = require("../models/Message");
 const Room = require("../models/Room");
 const Session = require("../models/Session");
+const User = require("../models/User");
 
 router.get("/messages", async (req, res) => {
   try {
@@ -56,6 +57,43 @@ router.get("/sessions/:sessionId", async (req, res) => {
     res.json(session);
   } catch (err) {
     res.status(500).json({ error: "Failed to fetch session" });
+  }
+});
+
+router.get("/forum-users", async (req, res) => {
+  try {
+    const users = await User.find().select("-password").sort({ createdAt: -1 });
+    res.json(users);
+  } catch (err) {
+    res.status(500).json({ error: "Failed to fetch forum users" });
+  }
+});
+
+router.delete("/forum-posts/:postId", async (req, res) => {
+  try {
+    const ForumPost = require("../models/ForumPost");
+    const ForumComment = require("../models/ForumComment");
+    const post = await ForumPost.findById(req.params.postId);
+    if (!post) return res.status(404).json({ error: "Post not found" });
+    await ForumPost.findByIdAndDelete(req.params.postId);
+    await ForumComment.deleteMany({ postId: req.params.postId });
+    res.json({ success: true });
+  } catch (err) {
+    res.status(500).json({ error: "Failed to delete post" });
+  }
+});
+
+router.delete("/forum-comments/:commentId", async (req, res) => {
+  try {
+    const ForumComment = require("../models/ForumComment");
+    const ForumPost = require("../models/ForumPost");
+    const comment = await ForumComment.findById(req.params.commentId);
+    if (!comment) return res.status(404).json({ error: "Comment not found" });
+    await ForumComment.findByIdAndDelete(req.params.commentId);
+    await ForumPost.findByIdAndUpdate(comment.postId, { $inc: { commentCount: -1 } });
+    res.json({ success: true });
+  } catch (err) {
+    res.status(500).json({ error: "Failed to delete comment" });
   }
 });
 
