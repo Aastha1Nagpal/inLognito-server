@@ -5,7 +5,7 @@ const jwt = require("jsonwebtoken");
 const User = require("../models/User");
 const { adjectives, nouns } = require("unique-username-generator");
 
-const JWT_SECRET = "inlognito_secret_key";
+const JWT_SECRET = process.env.JWT_SECRET;
 
 const cleanAdjectives = adjectives.filter((w) => /^[a-z]+$/.test(w));
 const cleanNouns = nouns.filter((w) => /^[a-z]+$/.test(w));

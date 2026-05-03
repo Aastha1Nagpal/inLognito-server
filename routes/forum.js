@@ -4,7 +4,7 @@ const jwt = require("jsonwebtoken");
 const ForumPost = require("../models/ForumPost");
 const ForumComment = require("../models/ForumComment");
 
-const JWT_SECRET = "inlognito_secret_key";
+const JWT_SECRET = process.env.JWT_SECRET;
 
 // GET /api/forum/posts
 router.get("/posts", async (req, res) => {
