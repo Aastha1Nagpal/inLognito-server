@@ -9,7 +9,7 @@ const Room = require("./models/Room");
 const Message = require("./models/Message");
 const Session = require("./models/Session");
 const roomsRouter = require("./routes/rooms");
-const adminRouter = require("./routes/admin");
+//const adminRouter = require("./routes/admin");
 const authRouter = require("./routes/auth");
 const forumRouter = require("./routes/forum");
 
@@ -46,7 +46,7 @@ const io = new Server(server, {
 app.use(cors({ origin: CLIENT_URL, credentials: true }));
 app.use(express.json());
 app.use("/api/rooms", roomsRouter);
-app.use("/api/admin", adminRouter);
+//app.use("/api/admin", adminRouter);
 app.use("/api/auth", authRouter);
 app.use("/api/forum", forumRouter);
 
